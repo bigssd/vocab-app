@@ -6,6 +6,7 @@ import { speakWord } from "../services/speech";
 import { checkSpelling, SpellingGrade } from "../services/spelling";
 import { firstMeaning, lines } from "../services/words";
 import { ProgressBar } from "./ProgressBar";
+import { ExampleBlock } from "./ExampleBlock";
 
 interface SessionResult {
   known: number;
@@ -253,9 +254,10 @@ export function StudySession({
                 )}
 
                 {word.example && (
-                  <div className="example-block">
-                    <p className="example-en">{word.example}</p>
-                  </div>
+                  <ExampleBlock
+                    example={word.example}
+                    settings={state.settings}
+                  />
                 )}
               </>
             )}

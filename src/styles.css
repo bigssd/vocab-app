@@ -824,8 +824,16 @@ button:disabled {
   max-width: 720px;
   margin: 14px auto 0;
   border-top: 1px solid var(--line);
-  padding: 15px 0 0;
+  padding: 15px 0 2px;
   text-align: left;
+}
+
+.example-block-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
 }
 
 .example-block .example-en {
@@ -833,6 +841,42 @@ button:disabled {
   color: #39455a;
   font-size: 15px;
   line-height: 1.65;
+}
+
+.example-zh {
+  margin: 8px 0 0;
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.translation-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 9px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.translation-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 9px 0 0;
+  border: 0;
+  border-radius: 6px;
+  background: var(--amber-soft);
+  color: var(--amber);
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.icon-btn.compact {
+  width: 30px;
+  height: 30px;
 }
 
 .rating-row {
@@ -1425,6 +1469,19 @@ button:disabled {
 
 .detail-section.exam p {
   color: #475367;
+}
+
+.detail-section.example-detail .example-block {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  border-top: 0;
+}
+
+.detail-section.example-detail .example-zh,
+.detail-section.example-detail .translation-state,
+.detail-section.example-detail .translation-retry {
+  margin-top: 8px;
 }
 
 .meaning-lines p {

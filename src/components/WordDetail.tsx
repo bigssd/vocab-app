@@ -4,6 +4,7 @@ import type { ProgressRecord, Settings, Word } from "../types/word";
 import { speakWord } from "../services/speech";
 import { formatReviewTime } from "../services/date";
 import { getWordStatusLabel, lines } from "../services/words";
+import { ExampleBlock } from "./ExampleBlock";
 
 export function WordDetail({
   word,
@@ -99,9 +100,11 @@ export function WordDetail({
         )}
 
         {word.example && (
-          <section className="detail-section">
-            <h3>真题例句</h3>
-            <p className="example-en">{word.example}</p>
+          <section className="detail-section example-detail">
+            <ExampleBlock
+              example={word.example}
+              settings={settings}
+            />
           </section>
         )}
 
