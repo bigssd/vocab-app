@@ -187,9 +187,7 @@ export function DictionaryPage() {
         <WordDetail
           word={selected}
           progress={state.progress[String(selected.id)]}
-          voiceURI={state.settings.voiceURI}
-          speechRate={state.settings.speechRate}
-          speechPitch={state.settings.speechPitch}
+          settings={state.settings}
           onClose={() => setSelectedId(null)}
         />
       )}

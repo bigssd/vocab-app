@@ -78,11 +78,7 @@ export function StudySession({
       if (!word || finished) return;
       const key = event.key.toLowerCase();
       if (key === "r") {
-        speakWord(word.word, {
-          voiceURI: state.settings.voiceURI,
-          rate: state.settings.speechRate,
-          pitch: state.settings.speechPitch,
-        });
+        speakWord(word.word, state.settings);
         return;
       }
       if (event.code === "Space") {
@@ -109,7 +105,7 @@ export function StudySession({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [word, finished, revealed, feedback, mode, spellingInput, index, words.length, state.settings.voiceURI, rateWord, gradeSpelling]);
+  }, [word, finished, revealed, feedback, mode, spellingInput, index, words.length, state.settings, rateWord, gradeSpelling]);
 
   if (words.length === 0) {
     return (
@@ -199,13 +195,7 @@ export function StudySession({
           className="icon-btn"
           aria-label="播放发音"
           title="发音"
-          onClick={() =>
-            speakWord(word.word, {
-              voiceURI: state.settings.voiceURI,
-              rate: state.settings.speechRate,
-              pitch: state.settings.speechPitch,
-            })
-          }
+          onClick={() => speakWord(word.word, state.settings)}
         >
           <Volume2 size={20} />
         </button>
@@ -239,13 +229,7 @@ export function StudySession({
                     type="button"
                     className="icon-btn"
                     aria-label="再听一遍"
-                    onClick={() =>
-                      speakWord(word.word, {
-                        voiceURI: state.settings.voiceURI,
-                        rate: state.settings.speechRate,
-                        pitch: state.settings.speechPitch,
-                      })
-                    }
+                    onClick={() => speakWord(word.word, state.settings)}
                   >
                     <Volume2 size={21} />
                   </button>

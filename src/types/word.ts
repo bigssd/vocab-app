@@ -1,5 +1,6 @@
 export type Rating = "forgot" | "fuzzy" | "known";
 export type WordStatus = "unlearned" | Rating;
+export type Accent = "auto" | "us" | "uk";
 
 export interface Word {
   id: number;
@@ -50,8 +51,10 @@ export interface Settings {
   dailyGoal: number;
   mode: "flash" | "spelling";
   voiceURI: string | null;
+  accent: Accent;
   speechRate: number;
   speechPitch: number;
+  speechVolume: number;
 }
 
 export interface StoreState {

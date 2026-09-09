@@ -41,8 +41,10 @@ export function defaultSettings(): Settings {
     dailyGoal: 50,
     mode: "flash",
     voiceURI: null,
-    speechRate: 0.6,
-    speechPitch: 0.8,
+    accent: "auto",
+    speechRate: 0.82,
+    speechPitch: 0.9,
+    speechVolume: 1,
   };
 }
 
@@ -105,8 +107,11 @@ function sanitizeSettings(value: unknown): Settings {
     dailyGoal: goal,
     mode: raw.mode === "spelling" ? "spelling" : "flash",
     voiceURI: typeof raw.voiceURI === "string" ? raw.voiceURI : null,
-    speechRate: Math.min(1.2, Math.max(0.5, asNumber(raw.speechRate, 0.6))),
-    speechPitch: Math.min(1.2, Math.max(0.6, asNumber(raw.speechPitch, 0.8))),
+    accent:
+      raw.accent === "us" || raw.accent === "uk" ? raw.accent : "auto",
+    speechRate: Math.min(1.2, Math.max(0.5, asNumber(raw.speechRate, 0.82))),
+    speechPitch: Math.min(1.2, Math.max(0.6, asNumber(raw.speechPitch, 0.9))),
+    speechVolume: Math.min(1, Math.max(0.1, asNumber(raw.speechVolume, 1))),
   };
 }
 

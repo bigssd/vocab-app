@@ -5,7 +5,11 @@ import {
   parseImport,
   serializeExport,
 } from "../services/storage";
-import { speakWord } from "../services/speech";
+import {
+  getRecommendedVoice,
+  speakWord,
+  subscribeToVoices,
+} from "../services/speech";
 import { toDayKey } from "../services/date";
 import { WORDS_COUNT } from "../data/words";
 
@@ -22,18 +26,46 @@ export function SettingsPage() {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
 
   useEffect(() => {
-    if (!("speechSynthesis" in window)) return;
-    const load = () => {
-      const englishVoices = window.speechSynthesis
-        .getVoices()
-        .filter((voice) => voice.lang.toLowerCase().startsWith("en"));
-      setVoices(englishVoices);
-    };
-    load();
-    window.speechSynthesis.addEventListener?.("voiceschanged", load);
-    return () =>
-      window.speechSynthesis.removeEventListener?.("voiceschanged", load);
+    return subscribeToVoices(setVoices);
   }, []);
+
+  const accent = state.settings.accent;
+  const visibleVoices = voices.filter((voice) => {
+    const lang = voice.lang.toLowerCase();
+    if (accent === "us") return lang.startsWith("en-us");
+    if (accent === "uk") return lang.startsWith("en-gb");
+    return true;
+  });
+  const selectedVoice = voices.find(
+    (voice) => voice.voiceURI === state.settings.voiceURI
+  );
+  if (
+    selectedVoice &&
+    !visibleVoices.some((voice) => voice.voiceURI === selectedVoice.voiceURI)
+  ) {
+    visibleVoices.push(selectedVoice);
+  }
+  const recommendedVoice = getRecommendedVoice({ accent });
+  const recommendationLabel = recommendedVoice
+    ? `自动选择（推荐：${recommendedVoice.name}）`
+    : "自动选择英语语音";
+
+  const chooseAccent = (nextAccent: "auto" | "us" | "uk") => {
+    if (state.settings.voiceURI && nextAccent !== "auto") {
+      const current = voices.find(
+        (voice) => voice.voiceURI === state.settings.voiceURI
+      );
+      const lang = current?.lang.toLowerCase() ?? "";
+      const matches =
+        (nextAccent === "us" && lang.startsWith("en-us")) ||
+        (nextAccent === "uk" && lang.startsWith("en-gb"));
+      if (!matches) {
+        patchSettings({ accent: nextAccent, voiceURI: null });
+        return;
+      }
+    }
+    patchSettings({ accent: nextAccent });
+  };
 
   const download = () => {
     const today = toDayKey();
@@ -177,8 +209,12 @@ export function SettingsPage() {
                 })
               }
             >
-              <option value="">自动选择英语语音</option>
-              {voices.map((voice) => (
+              <option value="">
+                {state.settings.voiceURI
+                  ? "自动选择英语语音"
+                  : recommendationLabel}
+              </option>
+              {visibleVoices.map((voice) => (
                 <option value={voice.voiceURI} key={voice.voiceURI}>
                   {voice.name} ({voice.lang})
                 </option>
@@ -189,17 +225,41 @@ export function SettingsPage() {
             type="button"
             className="btn btn-secondary icon-text"
             onClick={() =>
-              speakWord("vocabulary", {
-                voiceURI: state.settings.voiceURI,
-                rate: state.settings.speechRate,
-                pitch: state.settings.speechPitch,
-              })
+              speakWord("vocabulary", state.settings)
             }
           >
             <Volume2 size={17} />
             试听
           </button>
         </div>
+        <div className="segmented small accent-switch">
+          <button
+            type="button"
+            className={accent === "auto" ? "active" : ""}
+            onClick={() => chooseAccent("auto")}
+          >
+            自动口音
+          </button>
+          <button
+            type="button"
+            className={accent === "us" ? "active" : ""}
+            onClick={() => chooseAccent("us")}
+          >
+            美式
+          </button>
+          <button
+            type="button"
+            className={accent === "uk" ? "active" : ""}
+            onClick={() => chooseAccent("uk")}
+          >
+            英式
+          </button>
+        </div>
+        <p className="recommended-voice">
+          {state.settings.voiceURI
+            ? "已手动选择语音，手动选择优先于自动推荐"
+            : recommendationLabel}
+        </p>
         <div className="slider-fields">
           <label className="slider-field">
             <span>语速</span>
@@ -228,6 +288,20 @@ export function SettingsPage() {
               }
             />
             <strong>{state.settings.speechPitch.toFixed(2)}</strong>
+          </label>
+          <label className="slider-field">
+            <span>音量</span>
+            <input
+              type="range"
+              min="0.1"
+              max="1"
+              step="0.05"
+              value={state.settings.speechVolume}
+              onChange={(event) =>
+                patchSettings({ speechVolume: Number(event.target.value) })
+              }
+            />
+            <strong>{Math.round(state.settings.speechVolume * 100)}%</strong>
           </label>
         </div>
       </section>

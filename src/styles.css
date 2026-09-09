@@ -1701,6 +1701,16 @@ button:disabled {
   margin-top: 18px;
 }
 
+.accent-switch {
+  margin-top: 12px;
+}
+
+.recommended-voice {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 10px 0 0;
+}
+
 .slider-field {
   display: grid;
   grid-template-columns: 52px minmax(0, 1fr) 52px;

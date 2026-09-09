@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Volume2, X } from "lucide-react";
-import type { ProgressRecord, Word } from "../types/word";
+import type { ProgressRecord, Settings, Word } from "../types/word";
 import { speakWord } from "../services/speech";
 import { formatReviewTime } from "../services/date";
 import { getWordStatusLabel, lines } from "../services/words";
@@ -8,16 +8,12 @@ import { getWordStatusLabel, lines } from "../services/words";
 export function WordDetail({
   word,
   progress,
-  voiceURI,
-  speechRate,
-  speechPitch,
+  settings,
   onClose,
 }: {
   word: Word;
   progress: ProgressRecord | undefined;
-  voiceURI: string | null;
-  speechRate?: number;
-  speechPitch?: number;
+  settings: Settings;
   onClose: () => void;
 }) {
   useEffect(() => {
@@ -53,13 +49,7 @@ export function WordDetail({
             type="button"
             className="icon-btn"
             aria-label="播放发音"
-            onClick={() =>
-              speakWord(word.word, {
-                voiceURI,
-                rate: speechRate ?? 0.6,
-                pitch: speechPitch ?? 0.8,
-              })
-            }
+            onClick={() => speakWord(word.word, settings)}
           >
             <Volume2 size={21} />
           </button>
