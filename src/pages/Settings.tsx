@@ -1,10 +1,11 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { Download, Trash2, Upload } from "lucide-react";
+import { Download, Trash2, Upload, Volume2 } from "lucide-react";
 import { useStore } from "../store";
 import {
   parseImport,
   serializeExport,
 } from "../services/storage";
+import { speakWord } from "../services/speech";
 import { toDayKey } from "../services/date";
 import { WORDS_COUNT } from "../data/words";
 
@@ -165,24 +166,70 @@ export function SettingsPage() {
           <h2>发音</h2>
           <span>使用浏览器自带语音</span>
         </div>
-        <label className="select-field">
-          <span>英语发音</span>
-          <select
-            value={state.settings.voiceURI ?? ""}
-            onChange={(event) =>
-              patchSettings({
-                voiceURI: event.target.value || null,
+        <div className="voice-control">
+          <label className="select-field">
+            <span>英语发音</span>
+            <select
+              value={state.settings.voiceURI ?? ""}
+              onChange={(event) =>
+                patchSettings({
+                  voiceURI: event.target.value || null,
+                })
+              }
+            >
+              <option value="">自动选择英语语音</option>
+              {voices.map((voice) => (
+                <option value={voice.voiceURI} key={voice.voiceURI}>
+                  {voice.name} ({voice.lang})
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            type="button"
+            className="btn btn-secondary icon-text"
+            onClick={() =>
+              speakWord("vocabulary", {
+                voiceURI: state.settings.voiceURI,
+                rate: state.settings.speechRate,
+                pitch: state.settings.speechPitch,
               })
             }
           >
-            <option value="">系统默认英语语音</option>
-            {voices.map((voice) => (
-              <option value={voice.voiceURI} key={voice.voiceURI}>
-                {voice.name} ({voice.lang})
-              </option>
-            ))}
-          </select>
-        </label>
+            <Volume2 size={17} />
+            试听
+          </button>
+        </div>
+        <div className="slider-fields">
+          <label className="slider-field">
+            <span>语速</span>
+            <input
+              type="range"
+              min="0.5"
+              max="1.1"
+              step="0.05"
+              value={state.settings.speechRate}
+              onChange={(event) =>
+                patchSettings({ speechRate: Number(event.target.value) })
+              }
+            />
+            <strong>{state.settings.speechRate.toFixed(2)}x</strong>
+          </label>
+          <label className="slider-field">
+            <span>音调</span>
+            <input
+              type="range"
+              min="0.6"
+              max="1.2"
+              step="0.05"
+              value={state.settings.speechPitch}
+              onChange={(event) =>
+                patchSettings({ speechPitch: Number(event.target.value) })
+              }
+            />
+            <strong>{state.settings.speechPitch.toFixed(2)}</strong>
+          </label>
+        </div>
       </section>
 
       <section className="settings-section">

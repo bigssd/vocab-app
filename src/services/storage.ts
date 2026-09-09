@@ -41,6 +41,8 @@ export function defaultSettings(): Settings {
     dailyGoal: 50,
     mode: "flash",
     voiceURI: null,
+    speechRate: 0.6,
+    speechPitch: 0.8,
   };
 }
 
@@ -103,6 +105,8 @@ function sanitizeSettings(value: unknown): Settings {
     dailyGoal: goal,
     mode: raw.mode === "spelling" ? "spelling" : "flash",
     voiceURI: typeof raw.voiceURI === "string" ? raw.voiceURI : null,
+    speechRate: Math.min(1.2, Math.max(0.5, asNumber(raw.speechRate, 0.6))),
+    speechPitch: Math.min(1.2, Math.max(0.6, asNumber(raw.speechPitch, 0.8))),
   };
 }
 

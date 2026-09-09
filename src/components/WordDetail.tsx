@@ -9,11 +9,15 @@ export function WordDetail({
   word,
   progress,
   voiceURI,
+  speechRate,
+  speechPitch,
   onClose,
 }: {
   word: Word;
   progress: ProgressRecord | undefined;
   voiceURI: string | null;
+  speechRate?: number;
+  speechPitch?: number;
   onClose: () => void;
 }) {
   useEffect(() => {
@@ -49,7 +53,13 @@ export function WordDetail({
             type="button"
             className="icon-btn"
             aria-label="播放发音"
-            onClick={() => speakWord(word.word, voiceURI)}
+            onClick={() =>
+              speakWord(word.word, {
+                voiceURI,
+                rate: speechRate ?? 0.6,
+                pitch: speechPitch ?? 0.8,
+              })
+            }
           >
             <Volume2 size={21} />
           </button>

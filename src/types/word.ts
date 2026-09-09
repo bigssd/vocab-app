@@ -50,6 +50,8 @@ export interface Settings {
   dailyGoal: number;
   mode: "flash" | "spelling";
   voiceURI: string | null;
+  speechRate: number;
+  speechPitch: number;
 }
 
 export interface StoreState {

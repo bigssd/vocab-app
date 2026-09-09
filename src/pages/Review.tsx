@@ -114,6 +114,8 @@ export function ReviewPage() {
           word={selected}
           progress={state.progress[String(selected.id)]}
           voiceURI={state.settings.voiceURI}
+          speechRate={state.settings.speechRate}
+          speechPitch={state.settings.speechPitch}
           onClose={() => setSelected(null)}
         />
       )}

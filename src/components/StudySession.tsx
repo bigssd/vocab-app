@@ -78,7 +78,11 @@ export function StudySession({
       if (!word || finished) return;
       const key = event.key.toLowerCase();
       if (key === "r") {
-        speakWord(word.word, state.settings.voiceURI);
+        speakWord(word.word, {
+          voiceURI: state.settings.voiceURI,
+          rate: state.settings.speechRate,
+          pitch: state.settings.speechPitch,
+        });
         return;
       }
       if (event.code === "Space") {
@@ -195,7 +199,13 @@ export function StudySession({
           className="icon-btn"
           aria-label="播放发音"
           title="发音"
-          onClick={() => speakWord(word.word, state.settings.voiceURI)}
+          onClick={() =>
+            speakWord(word.word, {
+              voiceURI: state.settings.voiceURI,
+              rate: state.settings.speechRate,
+              pitch: state.settings.speechPitch,
+            })
+          }
         >
           <Volume2 size={20} />
         </button>
@@ -229,7 +239,13 @@ export function StudySession({
                     type="button"
                     className="icon-btn"
                     aria-label="再听一遍"
-                    onClick={() => speakWord(word.word, state.settings.voiceURI)}
+                    onClick={() =>
+                      speakWord(word.word, {
+                        voiceURI: state.settings.voiceURI,
+                        rate: state.settings.speechRate,
+                        pitch: state.settings.speechPitch,
+                      })
+                    }
                   >
                     <Volume2 size={21} />
                   </button>

@@ -1,5 +1,16 @@
 let voicesLoaded: Promise<SpeechSynthesisVoice[]> | null = null;
 
+export interface SpeechOptions {
+  voiceURI: string | null;
+  rate?: number;
+  pitch?: number;
+}
+
+const DEFAULT_SPEECH: Required<Pick<SpeechOptions, "rate" | "pitch">> = {
+  rate: 0.6,
+  pitch: 0.8,
+};
+
 function waitForVoices(): Promise<SpeechSynthesisVoice[]> {
   if (!("speechSynthesis" in window)) return Promise.resolve([]);
   const synth = window.speechSynthesis;
@@ -51,16 +62,18 @@ function pickEnglishVoice(
 
 export async function speakWord(
   text: string,
-  preferredVoiceURI: string | null
+  options: SpeechOptions
 ): Promise<boolean> {
   if (!("speechSynthesis" in window)) return false;
   const synth = window.speechSynthesis;
   const voices = await waitForVoices();
+  const preferredVoiceURI = options.voiceURI;
   const voice = pickEnglishVoice(voices, preferredVoiceURI);
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = voice?.lang ?? "en-US";
-  utterance.rate = 0.82;
-  utterance.pitch = 1;
+  utterance.rate = options.rate ?? DEFAULT_SPEECH.rate;
+  utterance.pitch = options.pitch ?? DEFAULT_SPEECH.pitch;
+  utterance.volume = 1;
   if (voice) utterance.voice = voice;
   synth.cancel();
   if (synth.paused) synth.resume();
