@@ -11,7 +11,7 @@ import type {
 } from "../types/word";
 
 const KIND_OPTIONS: { key: SessionKind; label: string; note: string }[] = [
-  { key: "today", label: "今日学习", note: "到期复习 + 易错词 + 新词" },
+  { key: "today", label: "今日学习", note: "到期复习优先，剩余名额补新词" },
   { key: "review", label: "到期复习", note: "只复习 SRS 到期单词" },
   { key: "mistakes", label: "错词训练", note: "优先处理错误次数多的词" },
   { key: "new", label: "新词学习", note: "从最高真题词频开始" },

@@ -5,7 +5,7 @@ import type {
   StudyPlan,
   Word,
 } from "../types/word";
-import { dueNow, isFuzzy, isMistake } from "./srs";
+import { dueNow, isMistake } from "./srs";
 
 function recordOf(progress: Record<string, ProgressRecord>, id: number) {
   return progress[String(id)];
@@ -30,10 +30,11 @@ export function buildStudyPlan(
   };
 
   const all = [...words].sort((a, b) => a.rank - b.rank);
-  const due = all.filter((word) => {
-    if (kind !== "today" && kind !== "review") return false;
-    return dueNow(recordOf(progress, word.id), nowIso);
-  });
+  const due = all.filter(
+    (word) =>
+      (kind === "today" || kind === "review") &&
+      dueNow(recordOf(progress, word.id), nowIso)
+  );
   const mistakeWords = all.filter(
     (word) =>
       (kind === "today" || kind === "mistakes") &&
@@ -42,8 +43,8 @@ export function buildStudyPlan(
   );
   const fuzzyWords = all.filter(
     (word) =>
-      (kind === "today" || kind === "review") &&
-      isFuzzy(recordOf(progress, word.id)) &&
+      kind === "today" &&
+      recordOf(progress, word.id)?.status === "fuzzy" &&
       !dueNow(recordOf(progress, word.id), nowIso)
   );
   const freshWords = all.filter(
@@ -76,10 +77,20 @@ export function buildStudyPlan(
     );
   }
 
-  due.forEach((word) => add(word, "due"));
-  mistakeWords.forEach((word) => add(word, "mistake"));
-  fuzzyWords.forEach((word) => add(word, "fuzzy"));
-  freshWords.forEach((word) => add(word, "fresh"));
+  if (kind === "mistakes") {
+    mistakeWords.forEach((word) => add(word, "mistake"));
+  } else {
+    due.forEach((word) => add(word, "due"));
+  }
+
+  if (kind === "new") {
+    freshWords.forEach((word) => add(word, "fresh"));
+  } else if (kind === "today") {
+    // New words take the remaining daily quota before non-due weak words.
+    freshWords.forEach((word) => add(word, "fresh"));
+    fuzzyWords.forEach((word) => add(word, "fuzzy"));
+    mistakeWords.forEach((word) => add(word, "mistake"));
+  }
 
   return { items, groupCounts: counts };
 }
